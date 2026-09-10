@@ -74,7 +74,7 @@ Route::middleware(['auth', 'role:Runner,SuperAdmin'])->prefix('runner')->group(f
     Route::post('/register-event', [OrderController::class, 'store'])->name('runner.register-event.store');
 
     // Ambil / Generate ulang Snap Token Midtrans (jika token sebelumnya kosong)
-    Route::post('/payment/{id}/token', [OrderController::class, 'getPaymentToken'])->name('runner.payment-token');
+    Route::match(['get', 'post'], '/payment/{id}/token', [OrderController::class, 'getPaymentToken'])->name('runner.payment-token');
 
     // Batalkan Pendaftaran (Hapus Tiket + Kembalikan Kuota)
     Route::delete('/cancel-registration/{id}', [OrderController::class, 'cancelRegistration'])->name('runner.cancel-registration');

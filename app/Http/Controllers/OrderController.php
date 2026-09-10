@@ -209,6 +209,12 @@ class OrderController extends Controller
             ? 'https://app.midtrans.com/snap/v1/transactions'
             : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
+        // Cegah request jika Server Key masih placeholder / belum diisi
+        if (empty($serverKey) || str_contains($serverKey, 'YOUR_SERVER_KEY_HERE')) {
+            logger('Midtrans Error: MIDTRANS_SERVER_KEY di .env masih placeholder. Ganti dengan key asli dari dashboard.midtrans.com');
+            return null;
+        }
+
         // Jika order_id lama kemungkinan sudah gagal/expired di sisi Midtrans,
         // generate suffix baru agar tidak ditolak karena duplicate order_id.
         if ($forceNewOrderId) {
