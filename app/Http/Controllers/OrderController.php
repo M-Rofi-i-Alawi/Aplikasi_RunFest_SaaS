@@ -161,23 +161,35 @@ class OrderController extends Controller
      */
     public function getPaymentToken(int $id)
     {
-        $pendaftaran = PendaftaranLari::where('id_pendaftaran', $id)
+        $pendaftaran = PendaftaranLari::with(['pembayaran', 'kategori', 'event'])
+            ->where('id_pendaftaran', $id)
             ->where('id_runner', auth()->user()->id_user)
             ->where('status_pembayaran', 'Pending')
-            ->with(['pembayaran', 'kategori', 'event'])
             ->firstOrFail();
 
         $pembayaran = $pendaftaran->pembayaran;
 
+        if (!$pembayaran) {
+            return redirect()->route('runner.dashboard')
+                ->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
         if (!$pembayaran->snap_token) {
+            // Jika order_id lama sudah tercatat gagal di Midtrans, buat order_id baru
             $snapToken = $this->requestSnapToken(
                 $pembayaran,
                 $pendaftaran->kategori,
                 $pendaftaran->event,
-                auth()->user()
+                auth()->user(),
+                true // forceNewOrderId = true
             );
         } else {
             $snapToken = $pembayaran->snap_token;
+        }
+
+        if (!$snapToken) {
+            return redirect()->route('runner.dashboard')
+                ->with('error', 'Gagal menghubungi gateway pembayaran Midtrans. Periksa Server Key di .env atau coba lagi.');
         }
 
         return redirect()->route('runner.dashboard')
@@ -189,16 +201,25 @@ class OrderController extends Controller
      * Helper: request Snap Token ke API Midtrans.
      * Menyimpan token ke kolom snap_token di tabel pembayaran_lari.
      */
-    private function requestSnapToken($pembayaran, $kategori, $event, $user): ?string
+    private function requestSnapToken($pembayaran, $kategori, $event, $user, bool $forceNewOrderId = false): ?string
     {
-        $serverKey = env('MIDTRANS_SERVER_KEY') ?: config('midtrans.server_key');
+        $serverKey    = env('MIDTRANS_SERVER_KEY') ?: config('midtrans.server_key');
         $isProduction = env('MIDTRANS_IS_PRODUCTION', false);
-        $snapUrl = $isProduction
+        $snapUrl      = $isProduction
             ? 'https://app.midtrans.com/snap/v1/transactions'
             : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
+        // Jika order_id lama kemungkinan sudah gagal/expired di sisi Midtrans,
+        // generate suffix baru agar tidak ditolak karena duplicate order_id.
+        if ($forceNewOrderId) {
+            $newOrderId = $pembayaran->kode_transaksi . '-R' . date('His');
+            $pembayaran->update(['kode_transaksi' => $newOrderId]);
+            $pembayaran->refresh();
+        }
+
         try {
-            $response = Http::withBasicAuth($serverKey, '')
+            $response = Http::timeout(15)
+                ->withBasicAuth($serverKey, '')
                 ->withHeaders([
                     'Accept'       => 'application/json',
                     'Content-Type' => 'application/json',
@@ -229,7 +250,7 @@ class OrderController extends Controller
                 return $snapToken;
             }
 
-            logger('Midtrans Error: ' . $response->body());
+            logger('Midtrans Error [' . $response->status() . ']: ' . $response->body());
         } catch (\Exception $e) {
             logger('Midtrans Connection Exception: ' . $e->getMessage());
         }
