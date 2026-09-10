@@ -188,10 +188,6 @@
                                         {{-- Fallback jika snap token belum terbuat --}}
                                         <form method="POST" action="{{ route('runner.confirm-payment', $daftar->id_pendaftaran) }}">
                                             @csrf
-                                            <button type="submit"
-                                                class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider transition-colors shadow-sm">
-                                                ✓ Konfirmasi Bayar (Simulasi Lunas)
-                                            </button>
                                         </form>
                                     @endif
                                     <form method="POST" action="{{ route('runner.cancel-registration', $daftar->id_pendaftaran) }}" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pendaftaran ini? Kuota akan dikembalikan.')">
