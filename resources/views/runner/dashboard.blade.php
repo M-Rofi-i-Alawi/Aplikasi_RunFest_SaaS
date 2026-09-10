@@ -185,9 +185,12 @@
                                             💳 Bayar Sekarang
                                         </button>
                                     @else
-                                        {{-- Fallback jika snap token belum terbuat --}}
-                                        <form method="POST" action="{{ route('runner.confirm-payment', $daftar->id_pendaftaran) }}">
+                                        {{-- Tombol Generate / Lanjut Bayar jika token belum tersimpan --}}
+                                        <form method="POST" action="{{ route('runner.payment-token', $daftar->id_pendaftaran) }}">
                                             @csrf
+                                            <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#ff5500] hover:bg-[#e64d00] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-orange-500/25 transition duration-200">
+                                                💳 Lanjut ke Pembayaran
+                                            </button>
                                         </form>
                                     @endif
                                     <form method="POST" action="{{ route('runner.cancel-registration', $daftar->id_pendaftaran) }}" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pendaftaran ini? Kuota akan dikembalikan.')">

@@ -73,8 +73,8 @@ Route::middleware(['auth', 'role:Runner,SuperAdmin'])->prefix('runner')->group(f
     Route::get('/register-event/{slug}', [OrderController::class, 'create'])->name('runner.register-event');
     Route::post('/register-event', [OrderController::class, 'store'])->name('runner.register-event.store');
 
-    // Konfirmasi Pembayaran (Simulasi)
-    Route::post('/confirm-payment/{id}', [OrderController::class, 'confirmPayment'])->name('runner.confirm-payment');
+    // Ambil / Generate ulang Snap Token Midtrans (jika token sebelumnya kosong)
+    Route::post('/payment/{id}/token', [OrderController::class, 'getPaymentToken'])->name('runner.payment-token');
 
     // Batalkan Pendaftaran (Hapus Tiket + Kembalikan Kuota)
     Route::delete('/cancel-registration/{id}', [OrderController::class, 'cancelRegistration'])->name('runner.cancel-registration');
