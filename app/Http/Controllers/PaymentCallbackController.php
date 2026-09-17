@@ -55,6 +55,9 @@ class PaymentCallbackController extends Controller
                     $pendaftaran->update([
                         'status_pembayaran' => 'Lunas',
                     ]);
+
+                    // Opsi A: Terbitkan nomor BIB resmi saat pembayaran terkonfirmasi LUNAS
+                    $pendaftaran->assignBibNumber();
                 }
             }
             // Skenario B: Dibatalkan / Kedaluwarsa / Ditolak (cancel / deny / expire)
@@ -69,6 +72,7 @@ class PaymentCallbackController extends Controller
                 if ($pendaftaran->status_pembayaran === 'Pending') {
                     $pendaftaran->update([
                         'status_pembayaran' => 'Gagal',
+                        'bib_number'        => null,
                     ]);
 
                     // Rollback kuota kategori

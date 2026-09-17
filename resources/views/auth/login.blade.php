@@ -1,26 +1,34 @@
 @extends('layouts.app')
 
-@section('title', 'Masuk')
+@section('title', 'Masuk - RunFest SaaS')
 
 @section('content')
-<div class="min-h-[80vh] flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md">
-        {{-- Card --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+<div class="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    {{-- Decorative Background Elements --}}
+    <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#F05423]/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-blue-600/10 blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10">
+        {{-- Card Container --}}
+        <div class="bg-white dark:bg-[#0f2137] rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-8 backdrop-blur-sm transition-colors duration-200">
+            
+            {{-- Header --}}
             <div class="text-center mb-8">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto mb-3 text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
+                <div class="inline-flex items-center justify-center mb-4 p-3 rounded-2xl bg-orange-50 dark:bg-white/5 border border-orange-100 dark:border-white/10 shadow-sm">
+                    <img src="{{ asset('images/logo-icon.png') }}" alt="RunFest Logo" class="h-12 w-auto object-contain drop-shadow-sm hover:scale-105 transition-transform duration-300">
                 </div>
-                <h1 class="text-2xl font-bold text-slate-900">Selamat Datang Kembali</h1>
-                <p class="text-sm text-slate-500 mt-1">Masuk ke akun RunFest Anda</p>
+                <h1 class="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-slate-900 dark:text-white">
+                    Masuk ke <span class="text-[#F05423]">RunFest</span>
+                </h1>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+                    Akses tiket lari, nomor BIB, dan event favorit Anda
+                </p>
             </div>
 
             {{-- Google OAuth Button --}}
             <a href="{{ route('auth.google') }}" 
-               class="w-full flex items-center justify-center space-x-3 px-4 py-3 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-sm transition-colors mb-6 shadow-sm">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
+               class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-[#081624] border border-slate-300 dark:border-white/15 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#122538] hover:border-slate-400 dark:hover:border-white/30 font-bold text-sm shadow-sm transition-all duration-200 group mb-6">
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -31,9 +39,9 @@
 
             {{-- Divider --}}
             <div class="relative flex py-2 items-center mb-6">
-                <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink mx-4 text-xs uppercase font-bold text-slate-400">atau manual</span>
-                <div class="flex-grow border-t border-slate-200"></div>
+                <div class="flex-grow border-t border-slate-200 dark:border-white/10"></div>
+                <span class="flex-shrink mx-4 text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">atau dengan email</span>
+                <div class="flex-grow border-t border-slate-200 dark:border-white/10"></div>
             </div>
 
             {{-- Form --}}
@@ -41,41 +49,56 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email</label>
+                    <label for="email" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Alamat Email
+                    </label>
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 text-sm transition-colors"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                         placeholder="nama@email.com">
                     @error('email')
-                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                        <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            {{ $message }}
+                        </p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="password" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            Password
+                        </label>
+                    </div>
                     <input type="password" id="password" name="password" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 text-sm transition-colors"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                         placeholder="••••••••">
                     @error('password')
-                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                        <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            {{ $message }}
+                        </p>
                     @enderror
                 </div>
 
                 <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                        <span class="text-sm text-slate-600">Ingat saya</span>
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 dark:border-white/20 text-[#F05423] focus:ring-[#F05423] bg-white dark:bg-[#081624]">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Ingat saya</span>
                     </label>
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition-colors">
+                    class="w-full py-3 rounded-xl bg-[#F05423] hover:bg-[#d94416] text-white font-black italic uppercase tracking-wider text-sm shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
                     Masuk Akun
                 </button>
             </form>
 
-            <p class="text-center mt-6 text-sm text-slate-600">
+            {{-- Footer Links --}}
+            <p class="text-center mt-6 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
                 Belum punya akun? 
-                <a href="{{ route('register') }}" class="text-blue-600 hover:underline font-bold">Daftar Sekarang</a>
+                <a href="{{ route('register') }}" class="text-[#F05423] hover:underline font-extrabold ml-1">
+                    Daftar Sekarang
+                </a>
             </p>
         </div>
     </div>

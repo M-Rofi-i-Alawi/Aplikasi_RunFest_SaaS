@@ -78,6 +78,9 @@ Route::middleware(['auth', 'role:Runner,SuperAdmin'])->prefix('runner')->group(f
 
     // Batalkan Pendaftaran (Hapus Tiket + Kembalikan Kuota)
     Route::delete('/cancel-registration/{id}', [OrderController::class, 'cancelRegistration'])->name('runner.cancel-registration');
+
+    // Invoice / Bukti Pembayaran Resmi
+    Route::get('/ticket/{id}/invoice', [OrderController::class, 'invoice'])->name('runner.ticket.invoice');
 });
 
 // ========================================================================
@@ -93,6 +96,7 @@ Route::middleware(['auth', 'role:Organizer,SuperAdmin'])->prefix('organizer')->g
     Route::post('/events', [EventController::class, 'store'])->name('organizer.events.store');
     Route::get('/events/{id}/edit', [EventController::class, 'edit'])->name('organizer.events.edit');
     Route::put('/events/{id}', [EventController::class, 'update'])->name('organizer.events.update');
+    Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('organizer.events.destroy');
 
     // Tambah Kategori ke Event
     Route::post('/events/{id}/kategori', [EventController::class, 'storeKategori'])->name('organizer.events.kategori.store');

@@ -9,6 +9,7 @@ use App\Models\PendaftaranLari;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
@@ -30,15 +31,25 @@ class OrderController extends Controller
                 ->with('warning', '⚠️ Wajib Lengkapi Identitas: Harap isi NIK valid (16 digit angka) dan unggah Foto KTP/Kartu Pelajar sebelum mendaftar event.');
         }
 
-        // Cek pendaftaran aktif
-        $sudahDaftar = PendaftaranLari::where('id_event', $event->id_event)
+        // Cek pendaftaran aktif: Pisahkan antara Lunas dan Pending (Opsi B Anti-Spam)
+        $sudahLunas = PendaftaranLari::where('id_event', $event->id_event)
             ->where('id_runner', $user->id_user)
-            ->whereNotIn('status_pembayaran', ['Gagal'])
+            ->where('status_pembayaran', 'Lunas')
             ->exists();
 
-        if ($sudahDaftar) {
+        if ($sudahLunas) {
             return redirect()->route('runner.dashboard')
-                ->with('warning', 'Anda sudah terdaftar di event ini.');
+                ->with('warning', 'Anda sudah terdaftar dan memiliki tiket resmi untuk event ini.');
+        }
+
+        $adaPending = PendaftaranLari::where('id_event', $event->id_event)
+            ->where('id_runner', $user->id_user)
+            ->where('status_pembayaran', 'Pending')
+            ->exists();
+
+        if ($adaPending) {
+            return redirect()->route('runner.dashboard')
+                ->with('error', 'Kamu masih memiliki tagihan yang belum dibayar untuk event ini. Selesaikan atau batalkan terlebih dahulu.');
         }
 
         return view('runner.register-event', compact('event'));
@@ -46,7 +57,9 @@ class OrderController extends Controller
 
     /**
      * Proses pendaftaran event.
-     * Menggunakan DB::transaction() dan lockForUpdate() untuk mencegah race condition pada kuota & BIB.
+     * Menggunakan DB::transaction() dan lockForUpdate() untuk mencegah race condition.
+     * Opsi A: Nomor BIB HANYA diterbitkan jika pembayaran sudah Lunas (atau event gratis).
+     * Opsi B: Membatasi maksimal 1 tiket pending per runner per event.
      */
     public function store(Request $request)
     {
@@ -70,46 +83,57 @@ class OrderController extends Controller
                     ->lockForUpdate()
                     ->firstOrFail();
 
-                $sudahDaftar = PendaftaranLari::where('id_event', $validated['id_event'])
+                // Validasi tiket Lunas
+                $sudahLunas = PendaftaranLari::where('id_event', $validated['id_event'])
                     ->where('id_runner', $user->id_user)
-                    ->whereNotIn('status_pembayaran', ['Gagal'])
+                    ->where('status_pembayaran', 'Lunas')
                     ->exists();
 
-                if ($sudahDaftar) {
-                    throw new \Exception('Anda sudah terdaftar di event ini.');
+                if ($sudahLunas) {
+                    throw new \Exception('Anda sudah terdaftar dan memiliki tiket resmi untuk event ini.');
+                }
+
+                // Opsi B: Anti-Spam - Cegah pendaftaran baru jika masih ada yang Pending
+                $adaPending = PendaftaranLari::where('id_event', $validated['id_event'])
+                    ->where('id_runner', $user->id_user)
+                    ->where('status_pembayaran', 'Pending')
+                    ->exists();
+
+                if ($adaPending) {
+                    throw new \Exception('Kamu masih memiliki tagihan yang belum dibayar untuk event ini. Selesaikan atau batalkan terlebih dahulu.');
                 }
 
                 if ($kategori->terisi >= $kategori->kuota_peserta) {
                     throw new \Exception('Maaf, kuota untuk kategori ini sudah penuh.');
                 }
 
-                // Generate BIB Number
-                $prefix = $this->generateBibPrefix($kategori->nama_kategori);
-                $maxBib = PendaftaranLari::where('id_event', $validated['id_event'])
-                    ->where('bib_number', 'like', $prefix . '-%')
-                    ->selectRaw("MAX(CAST(SUBSTRING_INDEX(bib_number, '-', -1) AS UNSIGNED)) as max_num")
-                    ->value('max_num');
-                $nextNumber = ($maxBib ?? 0) + 1;
-                $bibNumber  = $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+                $isGratis = ((int) $kategori->harga) === 0;
 
                 // Generate QR Code Token
                 $qrCodeToken = hash('sha256', $user->id_user . '-' . $validated['id_event'] . '-' . Str::uuid() . '-' . microtime(true));
 
-                $isGratis = ((int) $kategori->harga) === 0;
-                $kodeTransaksi = $isGratis
-                    ? 'FREE-' . strtoupper(Str::random(3)) . '-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT)
-                    : 'TRX-' . strtoupper(Str::random(3)) . '-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-
+                // Opsi A: Nomor BIB awalnya NULL jika berbayar (Pending).
+                // Hanya diisi jika event Gratis (langsung Lunas)
                 $pendaftaran = PendaftaranLari::create([
                     'id_event'          => $validated['id_event'],
                     'id_runner'         => $user->id_user,
                     'id_kategori'       => $validated['id_kategori'],
-                    'bib_number'        => $bibNumber,
+                    'bib_number'        => null,
                     'ukuran_jersey'     => $validated['ukuran_jersey'],
                     'qr_code_token'     => $qrCodeToken,
                     'status_pembayaran' => $isGratis ? 'Lunas' : 'Pending',
                     'status_racepack'   => 'Belum Diambil',
                 ]);
+
+                // Jika event gratis, langsung terbitkan nomor BIB resmi
+                if ($isGratis) {
+                    $pendaftaran->assignBibNumber();
+                }
+
+                // Format unik order_id: TRX-{id_pendaftaran}-{time()}
+                $kodeTransaksi = $isGratis
+                    ? 'FREE-' . $pendaftaran->id_pendaftaran . '-' . time()
+                    : 'TRX-' . $pendaftaran->id_pendaftaran . '-' . time();
 
                 $pembayaran = PembayaranLari::create([
                     'id_pendaftaran'    => $pendaftaran->id_pendaftaran,
@@ -143,15 +167,23 @@ class OrderController extends Controller
             }
 
             // Event BERBAYAR: request Snap Token ke Midtrans
-            $event     = EventLari::find($validated['id_event']);
-            $snapToken = $this->requestSnapToken($pembayaran, $kategori, $event, $user);
+            $event = EventLari::find($validated['id_event']);
+            try {
+                $snapToken = $this->requestSnapToken($pembayaran, $kategori, $event, $user, false, $pendaftaran);
+            } catch (\Exception $snapEx) {
+                Log::error('Midtrans Snap Error: ' . $snapEx->getMessage());
+                return redirect()->route('runner.dashboard')
+                    ->with('warning', 'Pendaftaran berhasil dibuat, namun token pembayaran belum siap: ' . $snapEx->getMessage() . '. Silakan klik "Lanjut ke Pembayaran" pada tiket Anda.')
+                    ->with('error', 'Gagal Midtrans: ' . $snapEx->getMessage());
+            }
 
             return redirect()->route('runner.dashboard')
-                ->with('success', 'Pendaftaran berhasil! BIB: ' . $pendaftaran->bib_number . '. Silakan selesaikan pembayaran.')
+                ->with('success', 'Pendaftaran berhasil dibuat! Silakan selesaikan pembayaran. Nomor BIB resmi akan diterbitkan otomatis setelah pembayaran lunas.')
                 ->with('snap_token', $snapToken);
 
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+            Log::error('Midtrans Snap Error: ' . $e->getMessage());
+            return back()->with('error', 'Pendaftaran Gagal: ' . $e->getMessage());
         }
     }
 
@@ -161,47 +193,51 @@ class OrderController extends Controller
      */
     public function getPaymentToken(int $id)
     {
-        $pendaftaran = PendaftaranLari::with(['pembayaran', 'kategori', 'event'])
-            ->where('id_pendaftaran', $id)
-            ->where('id_runner', auth()->user()->id_user)
-            ->where('status_pembayaran', 'Pending')
-            ->firstOrFail();
+        try {
+            $pendaftaran = PendaftaranLari::with(['pembayaran', 'kategori', 'event'])
+                ->where('id_pendaftaran', $id)
+                ->where('id_runner', auth()->user()->id_user)
+                ->where('status_pembayaran', 'Pending')
+                ->firstOrFail();
 
-        $pembayaran = $pendaftaran->pembayaran;
+            $pembayaran = $pendaftaran->pembayaran;
 
-        if (!$pembayaran) {
+            if (!$pembayaran) {
+                return back()->with('error', 'Data pembayaran tidak ditemukan.');
+            }
+
+            if (!$pembayaran->snap_token) {
+                // Request Snap Token baru ke Midtrans dengan order_id unik
+                $snapToken = $this->requestSnapToken(
+                    $pembayaran,
+                    $pendaftaran->kategori,
+                    $pendaftaran->event,
+                    auth()->user(),
+                    true,
+                    $pendaftaran
+                );
+            } else {
+                $snapToken = $pembayaran->snap_token;
+            }
+
+            if (!$snapToken) {
+                throw new \Exception('Snap Token kosong dari gateway Midtrans.');
+            }
+
             return redirect()->route('runner.dashboard')
-                ->with('error', 'Data pembayaran tidak ditemukan.');
+                ->with('snap_token', $snapToken)
+                ->with('success', 'Silakan selesaikan pembayaran pada pop-up yang muncul.');
+        } catch (\Exception $e) {
+            Log::error('Midtrans Snap Error: ' . $e->getMessage());
+            return back()->with('error', 'Gagal Midtrans: ' . $e->getMessage());
         }
-
-        if (!$pembayaran->snap_token) {
-            // Jika order_id lama sudah tercatat gagal di Midtrans, buat order_id baru
-            $snapToken = $this->requestSnapToken(
-                $pembayaran,
-                $pendaftaran->kategori,
-                $pendaftaran->event,
-                auth()->user(),
-                true // forceNewOrderId = true
-            );
-        } else {
-            $snapToken = $pembayaran->snap_token;
-        }
-
-        if (!$snapToken) {
-            return redirect()->route('runner.dashboard')
-                ->with('error', 'Gagal menghubungi gateway pembayaran Midtrans. Periksa Server Key di .env atau coba lagi.');
-        }
-
-        return redirect()->route('runner.dashboard')
-            ->with('snap_token', $snapToken)
-            ->with('success', 'Silakan selesaikan pembayaran pada pop-up yang muncul.');
     }
 
     /**
      * Helper: request Snap Token ke API Midtrans.
      * Menyimpan token ke kolom snap_token di tabel pembayaran_lari.
      */
-    private function requestSnapToken($pembayaran, $kategori, $event, $user, bool $forceNewOrderId = false): ?string
+    private function requestSnapToken($pembayaran, $kategori, $event, $user, bool $forceNewOrderId = false, $pendaftaran = null): string
     {
         $serverKey    = env('MIDTRANS_SERVER_KEY') ?: config('midtrans.server_key');
         $isProduction = env('MIDTRANS_IS_PRODUCTION', false);
@@ -211,57 +247,76 @@ class OrderController extends Controller
 
         // Cegah request jika Server Key masih placeholder / belum diisi
         if (empty($serverKey) || str_contains($serverKey, 'YOUR_SERVER_KEY_HERE')) {
-            logger('Midtrans Error: MIDTRANS_SERVER_KEY di .env masih placeholder. Ganti dengan key asli dari dashboard.midtrans.com');
-            return null;
+            throw new \Exception('MIDTRANS_SERVER_KEY di .env belum diisi atau masih placeholder. Harap masukkan Server Key dari dashboard.midtrans.com.');
         }
 
-        // Jika order_id lama kemungkinan sudah gagal/expired di sisi Midtrans,
-        // generate suffix baru agar tidak ditolak karena duplicate order_id.
-        if ($forceNewOrderId) {
-            $newOrderId = $pembayaran->kode_transaksi . '-R' . date('His');
-            $pembayaran->update(['kode_transaksi' => $newOrderId]);
-            $pembayaran->refresh();
-        }
+        $pendaftaran = $pendaftaran ?? $pembayaran->pendaftaran;
+        $idPendaftaran = $pendaftaran ? $pendaftaran->id_pendaftaran : ($pembayaran->id_pendaftaran ?? $pembayaran->id_pembayaran);
 
-        try {
-            $response = Http::timeout(15)
-                ->withBasicAuth($serverKey, '')
-                ->withHeaders([
-                    'Accept'       => 'application/json',
-                    'Content-Type' => 'application/json',
-                ])
-                ->post($snapUrl, [
-                    'transaction_details' => [
-                        'order_id'     => $pembayaran->kode_transaksi,
-                        'gross_amount' => (int) $kategori->harga,
-                    ],
-                    'customer_details' => [
-                        'first_name' => $user->nama,
-                        'email'      => $user->email,
-                        'phone'      => $user->no_hp ?? '081234567890',
-                    ],
-                    'item_details' => [
-                        [
-                            'id'       => (string) $kategori->id_kategori,
-                            'price'    => (int) $kategori->harga,
-                            'quantity' => 1,
-                            'name'     => 'Tiket ' . substr($kategori->nama_kategori . ' ' . ($event->nama_event ?? ''), 0, 45),
-                        ],
-                    ],
-                ]);
+        // Format order_id unik: TRX-{id_pendaftaran}-{time()}
+        $orderId = 'TRX-' . $idPendaftaran . '-' . time();
+        $pembayaran->update(['kode_transaksi' => $orderId]);
+        $pembayaran->refresh();
 
-            if ($response->successful()) {
-                $snapToken = $response->json('token');
-                $pembayaran->update(['snap_token' => $snapToken]);
-                return $snapToken;
+        // Validasi & Normalisasi Payload Midtrans:
+        $eventObj = ($pendaftaran && $pendaftaran->event) ? $pendaftaran->event : $event;
+        $kategoriObj = ($pendaftaran && $pendaftaran->kategori) ? $pendaftaran->kategori : $kategori;
+
+        $itemPrice = (int) $kategoriObj->harga;
+        $grossAmount = max(1, $itemPrice);
+
+        $namaEvent = $eventObj->nama_event ?? 'Event Lari';
+        $namaKategori = $kategoriObj->nama_kategori ?? 'Kategori';
+        $itemName = \Illuminate\Support\Str::limit($namaEvent . ' - ' . $namaKategori, 45, '...');
+
+        $itemDetails = [
+            [
+                'id'       => 'KAT-' . ($kategoriObj->id_kategori ?? 1),
+                'price'    => $grossAmount,
+                'quantity' => 1,
+                'name'     => $itemName,
+            ]
+        ];
+
+        $response = Http::timeout(15)
+            ->withBasicAuth($serverKey, '')
+            ->withHeaders([
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+            ])
+            ->post($snapUrl, [
+                'transaction_details' => [
+                    'order_id'     => $orderId,
+                    'gross_amount' => $grossAmount,
+                ],
+                'customer_details' => [
+                    'first_name' => $user->nama,
+                    'email'      => $user->email,
+                    'phone'      => $user->no_hp ?? '081234567890',
+                ],
+                'item_details' => $itemDetails,
+                'callbacks'    => [
+                    'finish'   => route('runner.dashboard'),
+                    'unfinish' => route('runner.dashboard'),
+                    'error'    => route('runner.dashboard'),
+                ],
+            ]);
+
+        if ($response->successful()) {
+            $snapToken = $response->json('token');
+            if (empty($snapToken)) {
+                throw new \Exception('Respon Midtrans sukses namun tidak mengembalikan token pembayaran.');
             }
-
-            logger('Midtrans Error [' . $response->status() . ']: ' . $response->body());
-        } catch (\Exception $e) {
-            logger('Midtrans Connection Exception: ' . $e->getMessage());
+            $pembayaran->update(['snap_token' => $snapToken]);
+            return $snapToken;
         }
 
-        return null;
+        $errorMessages = $response->json('error_messages');
+        $errorBody = !empty($errorMessages)
+            ? (is_array($errorMessages) ? implode(', ', (array) $errorMessages) : (string) $errorMessages)
+            : $response->body();
+
+        throw new \Exception('Midtrans API [' . $response->status() . ']: ' . $errorBody);
     }
 
     /**
@@ -280,7 +335,10 @@ class OrderController extends Controller
 
         try {
             DB::transaction(function () use ($pendaftaran) {
-                $pendaftaran->update(['status_pembayaran' => 'Gagal']);
+                $pendaftaran->update([
+                    'status_pembayaran' => 'Gagal',
+                    'bib_number'        => null,
+                ]);
                 $pendaftaran->pembayaran()->update(['status_transaksi' => 'cancel']);
 
                 $kategori = KategoriLari::where('id_kategori', $pendaftaran->id_kategori)
@@ -297,6 +355,24 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membatalkan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Tampilkan Invoice / Bukti Pembayaran Resmi.
+     */
+    public function invoice(int $id)
+    {
+        $pendaftaran = PendaftaranLari::with(['event', 'kategori', 'pembayaran', 'runner'])
+            ->where('id_pendaftaran', $id)
+            ->where('id_runner', auth()->user()->id_user)
+            ->firstOrFail();
+
+        if ($pendaftaran->status_pembayaran !== 'Lunas') {
+            return redirect()->route('runner.dashboard')
+                ->with('error', 'Invoice hanya tersedia untuk tiket yang sudah berstatus Lunas.');
+        }
+
+        return view('runner.invoice', compact('pendaftaran'));
     }
 
     /**

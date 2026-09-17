@@ -95,4 +95,39 @@ class EventLari extends Model
         $today = now()->toDateString();
         return $today >= $this->tanggal_rpc_mulai && $today <= $this->tanggal_rpc_selesai;
     }
+
+    /**
+     * URL banner siap pakai untuk tag <img>.
+     * Mendukung URL eksternal, aset statis public, maupun path Laravel Storage.
+     */
+    public function getBannerImageUrlAttribute(): ?string
+    {
+        if (empty($this->banner_url)) {
+            return null;
+        }
+
+        if (str_starts_with($this->banner_url, 'http://') || str_starts_with($this->banner_url, 'https://')) {
+            return $this->banner_url;
+        }
+
+        if (str_starts_with($this->banner_url, '/')) {
+            return asset(ltrim($this->banner_url, '/'));
+        }
+
+        return asset('storage/' . $this->banner_url);
+    }
+
+    /**
+     * URL Google Maps venue dengan fallback otomatis ke Google Maps Search query.
+     */
+    public function getMapsUrlAttribute(): string
+    {
+        if (!empty($this->google_maps_url)) {
+            return $this->google_maps_url;
+        }
+
+        $query = trim(($this->lokasi_venue ?? '') . ' ' . ($this->nama_event ?? ''));
+        return 'https://www.google.com/maps/search/?api=1&query=' . urlencode($query);
+    }
 }
+
