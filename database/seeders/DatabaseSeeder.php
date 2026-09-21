@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@runfest.test',
             'password' => Hash::make('password'),
             'role' => 'SuperAdmin',
-            'no_hp' => '081200000001',
+            'no_hp' => '087812822400',
         ]);
 
         // ============================================================
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'organizer@runfest.test',
             'password' => Hash::make('password'),
             'role' => 'Organizer',
-            'no_hp' => '081200000002',
+            'no_hp' => '087812822400',
         ]);
 
         // ============================================================

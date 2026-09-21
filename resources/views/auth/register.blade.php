@@ -3,7 +3,7 @@
 @section('title', 'Daftar Akun Baru - RunFest SaaS')
 
 @section('content')
-<div class="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+<div class="min-h-[85vh] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
     {{-- Decorative Background Elements --}}
     <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#F05423]/10 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-blue-600/10 blur-3xl pointer-events-none"></div>
@@ -140,6 +140,47 @@
                     Masuk di sini
                 </a>
             </p>
+        </div>
+
+        {{-- ============================================================
+             CTA BANNER: Gabung Sebagai Event Organizer
+             ============================================================ --}}
+        @php
+            $adminWa = config('services.admin_wa', env('ADMIN_WA', '6287812822400'));
+            $waText  = urlencode('Halo Admin RunFest, saya ingin mendaftar dan memverifikasi organisasi/EO saya untuk menyelenggarakan event lari di platform RunFest SaaS.');
+            $waUrl   = "https://wa.me/{$adminWa}?text={$waText}";
+        @endphp
+        <div class="mt-5 relative overflow-hidden rounded-2xl border border-[#F05423]/30 bg-gradient-to-br from-[#F05423]/10 via-orange-50/80 to-amber-50/60 dark:from-[#F05423]/15 dark:via-[#1a1200]/80 dark:to-[#0f2137] p-5 shadow-lg shadow-orange-500/10">
+            {{-- Decorative shape --}}
+            <div class="absolute top-0 right-0 w-32 h-32 rounded-full bg-[#F05423]/10 -translate-y-8 translate-x-8 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-orange-300/10 translate-y-6 -translate-x-6 pointer-events-none"></div>
+
+            <div class="relative z-10 flex items-start gap-4">
+                {{-- Icon --}}
+                <div class="shrink-0 w-12 h-12 rounded-2xl bg-[#F05423] text-white flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                    </svg>
+                </div>
+                {{-- Content --}}
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] font-extrabold uppercase tracking-widest text-[#F05423] mb-0.5">Untuk Event Organizer (EO)</p>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight mb-1">
+                        Ingin Menyelenggarakan<br>Event Lari?
+                    </h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed mb-3">
+                        Bergabunglah sebagai Organizer resmi RunFest. Hubungi Admin via WhatsApp untuk proses verifikasi &amp; aktivasi akun EO Anda.
+                    </p>
+                    <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" id="eo-wa-cta"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0">
+                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.114 1.524 5.843L.057 23.569a.75.75 0 00.974.974l5.726-1.467A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.667-.522-5.179-1.428l-.371-.22-3.838.983.999-3.712-.242-.384A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                        </svg>
+                        Hubungi Admin via WhatsApp
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -179,10 +179,48 @@
                     </label>
                     <select id="status_event" name="status_event" required
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all">
-                        @foreach(['Draft', 'Publikasi', 'Selesai', 'Dibatalkan'] as $status)
-                            <option value="{{ $status }}" {{ old('status_event', $event->status_event) == $status ? 'selected' : '' }}>{{ $status }}</option>
+                        @foreach(['Draft', 'Moderasi', 'Publikasi', 'Selesai', 'Dibatalkan'] as $status)
+                            <option value="{{ $status }}" {{ old('status_event', $event->status_event) == $status ? 'selected' : '' }}>
+                                {{ $status == 'Moderasi' ? 'Moderasi (Pengajuan ke Admin)' : $status }}
+                            </option>
                         @endforeach
                     </select>
+                </div>
+
+                {{-- Contact Person (Narahubung) --}}
+                <div class="pt-4 border-t border-slate-200 dark:border-white/10">
+                    <h3 class="text-xs font-black italic uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-[#F05423]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        Informasi Contact Person (Narahubung)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="nama_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                                Nama CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
+                            </label>
+                            <input type="text" id="nama_cp" name="nama_cp" value="{{ old('nama_cp', $event->nama_cp) }}"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                                placeholder="Panitia Event">
+                        </div>
+                        <div>
+                            <label for="no_wa_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                                WhatsApp CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
+                            </label>
+                            <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp', $event->no_wa_cp) }}"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                                placeholder="628123456789">
+                        </div>
+                        <div>
+                            <label for="email_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                                Email CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
+                            </label>
+                            <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp', $event->email_cp) }}"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                                placeholder="event@domain.com">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

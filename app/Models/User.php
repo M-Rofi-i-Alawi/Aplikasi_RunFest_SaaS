@@ -27,6 +27,7 @@ class User extends Authenticatable
         'kontak_darurat',
         'ukuran_jersey_default',
         'role',
+        'status_akun',
     ];
 
     protected $hidden = [
@@ -38,7 +39,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -78,6 +79,29 @@ class User extends Authenticatable
         return $this->hasOne(RekeningOrganizer::class, 'id_user', 'id_user')->where('is_primary', true);
     }
 
+    /**
+     * Event yang ditugaskan kepada user ini sebagai Marshal.
+     */
+    public function assignedEvents()
+    {
+        return $this->hasManyThrough(
+            EventLari::class,
+            EventMarshal::class,
+            'id_user_marshal', // FK di event_marshals -> users
+            'id_event',        // FK di event_lari -> event_marshals
+            'id_user',         // PK di users
+            'id_event'         // FK di event_marshals -> event_lari
+        );
+    }
+
+    /**
+     * Penugasan marshal user ini (pivot records).
+     */
+    public function eventMarshalAssignments()
+    {
+        return $this->hasMany(EventMarshal::class, 'id_user_marshal', 'id_user');
+    }
+
     /* ================================================================
      * HELPER METHODS
      * ================================================================ */
@@ -103,7 +127,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Cek apakah user login via Google OAuth (tidak punya password manual).
+     * Cek apakah akun user berstatus Aktif.
+     */
+    public function isAktif(): bool
+    {
+        return $this->status_akun === 'Aktif';
+    }
+
+    /**
+     * Cek apakah akun user sedang dalam moderasi (Pending).
+     */
+    public function isPending(): bool
+    {
+        return $this->status_akun === 'Pending';
+    }
+
+    /**
+     * Cek apakah user login via Google OAuth (tidak punya password manual).\
      */
     public function isOAuthUser(): bool
     {

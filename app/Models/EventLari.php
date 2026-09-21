@@ -27,16 +27,20 @@ class EventLari extends Model
         'status_event',
         'deskripsi',
         'banner_url',
+        // Contact Person fields
+        'nama_cp',
+        'no_wa_cp',
+        'email_cp',
     ];
 
     protected function casts(): array
     {
         return [
-            'tanggal_event' => 'date',
-            'tanggal_rpc_mulai' => 'date',
-            'tanggal_rpc_selesai' => 'date',
-            'latitude' => 'decimal:8',
-            'longitude' => 'decimal:8',
+            'tanggal_event'      => 'date',
+            'tanggal_rpc_mulai'  => 'date',
+            'tanggal_rpc_selesai'=> 'date',
+            'latitude'           => 'decimal:8',
+            'longitude'          => 'decimal:8',
         ];
     }
 
@@ -81,6 +85,29 @@ class EventLari extends Model
     public function pendaftaran()
     {
         return $this->hasMany(PendaftaranLari::class, 'id_event', 'id_event');
+    }
+
+    /**
+     * Penugasan Marshal pada event ini.
+     */
+    public function marshals()
+    {
+        return $this->hasMany(EventMarshal::class, 'id_event', 'id_event');
+    }
+
+    /**
+     * Users yang berperan sebagai Marshal di event ini.
+     */
+    public function assignedMarshals()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            EventMarshal::class,
+            'id_event',        // FK di event_marshals -> event_lari
+            'id_user',         // PK di users
+            'id_event',        // PK di event_lari
+            'id_user_marshal'  // FK di event_marshals -> users
+        );
     }
 
     /* ================================================================
@@ -129,5 +156,35 @@ class EventLari extends Model
         $query = trim(($this->lokasi_venue ?? '') . ' ' . ($this->nama_event ?? ''));
         return 'https://www.google.com/maps/search/?api=1&query=' . urlencode($query);
     }
-}
 
+    /**
+     * URL WhatsApp langsung ke narahubung event.
+     */
+    public function getWaUrlAttribute(): ?string
+    {
+        if (empty($this->no_wa_cp)) {
+            return null;
+        }
+
+        // Normalisasi nomor: hapus karakter non-digit, ganti prefix 0 -> 62
+        $no = preg_replace('/\D/', '', $this->no_wa_cp);
+        if (str_starts_with($no, '0')) {
+            $no = '62' . substr($no, 1);
+        }
+
+        $text = urlencode(
+            "Halo {$this->nama_cp}, saya ingin bertanya seputar event {$this->nama_event}."
+        );
+
+        return "https://wa.me/{$no}?text={$text}";
+    }
+
+    /**
+     * Apakah event ini sudah selesai / lewat.
+     */
+    public function getIsFinishedAttribute(): bool
+    {
+        return $this->status_event === 'Selesai'
+            || ($this->tanggal_event && $this->tanggal_event->isPast());
+    }
+}

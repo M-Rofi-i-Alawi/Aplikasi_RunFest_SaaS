@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $userId = auth()->user()->id_user;
 
         $pendaftaran = PendaftaranLari::where('id_runner', $userId)
-            ->with(['event', 'kategori', 'pembayaran'])
+            ->with(['event.organizer', 'kategori', 'pembayaran'])
             ->latest()
             ->get();
 

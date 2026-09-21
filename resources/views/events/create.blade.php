@@ -178,8 +178,53 @@
                     <select id="status_event" name="status_event" required
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all">
                         <option value="Draft" {{ old('status_event') == 'Draft' ? 'selected' : '' }}>Draft (Belum Tampil Publik)</option>
+                        <option value="Moderasi" {{ old('status_event') == 'Moderasi' ? 'selected' : '' }}>Ajukan Moderasi (Review Admin)</option>
                         <option value="Publikasi" {{ old('status_event') == 'Publikasi' ? 'selected' : '' }}>Publikasi (Langsung Tampil di Katalog)</option>
                     </select>
+                </div>
+            </div>
+        </div>
+
+        {{-- Contact Person Card --}}
+        <div class="bg-white dark:bg-[#0f2137] rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm p-6 sm:p-8 mb-6 transition-colors">
+            <h2 class="text-base font-black italic uppercase tracking-wider text-slate-900 dark:text-white mb-6 pb-3 border-b border-slate-200 dark:border-white/10 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                2. Narahubung & Contact Person Event
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Informasi ini akan ditampilkan di halaman detail event untuk memudahkan peserta menghubungi panitia secara langsung.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {{-- Nama CP --}}
+                <div>
+                    <label for="nama_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nama Narahubung
+                    </label>
+                    <input type="text" id="nama_cp" name="nama_cp" value="{{ old('nama_cp') }}"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                        placeholder="Contoh: Budi Santoso - Race Director">
+                    @error('nama_cp') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- No WA CP --}}
+                <div>
+                    <label for="no_wa_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Nomor WhatsApp
+                    </label>
+                    <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp') }}"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                        placeholder="Contoh: 081234567890">
+                    @error('no_wa_cp') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Email CP --}}
+                <div class="sm:col-span-2">
+                    <label for="email_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                        Email Narahubung <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
+                    </label>
+                    <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp') }}"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
+                        placeholder="Contoh: panitia@eventlari.com">
+                    @error('email_cp') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>

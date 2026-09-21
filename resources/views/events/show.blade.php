@@ -311,6 +311,43 @@
                     </div>
                 @endif
 
+                {{-- Contact Person / Narahubung Widget --}}
+                @if($event->nama_cp || $event->no_wa_cp)
+                    <div class="mt-3 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-500/25 p-4">
+                        <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-3 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                            </svg>
+                            Narahubung & Bantuan
+                        </h3>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-sm">
+                                {{ $event->nama_cp ? strtoupper(substr($event->nama_cp, 0, 1)) : '?' }}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-extrabold text-slate-900 dark:text-white truncate">
+                                    {{ $event->nama_cp ?? 'Panitia Event' }}
+                                </p>
+                                @if($event->email_cp)
+                                    <a href="mailto:{{ $event->email_cp }}" class="text-[11px] text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors truncate block">
+                                        {{ $event->email_cp }}
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                        @if($event->no_wa_cp)
+                            <a href="{{ $event->wa_url }}" target="_blank" rel="noopener noreferrer"
+                               class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.114 1.524 5.843L.057 23.569a.75.75 0 00.974.974l5.726-1.467A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.667-.522-5.179-1.428l-.371-.22-3.838.983.999-3.712-.242-.384A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                                </svg>
+                                Chat via WhatsApp
+                            </a>
+                        @endif
+                    </div>
+                @endif
+
             </div>
         </div>{{-- /right column --}}
 

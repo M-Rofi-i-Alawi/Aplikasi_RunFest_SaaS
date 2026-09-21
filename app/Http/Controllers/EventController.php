@@ -112,22 +112,26 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'nama_event' => ['required', 'string', 'max:255'],
-            'tanggal_event' => ['required', 'date', 'after:today'],
-            'lokasi_venue' => ['required', 'string', 'max:255'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'google_maps_url' => ['nullable', 'url', 'max:2000'],
-            'tanggal_rpc_mulai' => ['required', 'date', 'before:tanggal_event'],
-            'tanggal_rpc_selesai' => ['required', 'date', 'after_or_equal:tanggal_rpc_mulai', 'before_or_equal:tanggal_event'],
-            'deskripsi' => ['nullable', 'string'],
-            'status_event' => ['required', 'in:Draft,Publikasi'],
+            'banner'               => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'nama_event'           => ['required', 'string', 'max:255'],
+            'tanggal_event'        => ['required', 'date', 'after:today'],
+            'lokasi_venue'         => ['required', 'string', 'max:255'],
+            'latitude'             => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude'            => ['nullable', 'numeric', 'between:-180,180'],
+            'google_maps_url'      => ['nullable', 'url', 'max:2000'],
+            'tanggal_rpc_mulai'    => ['required', 'date', 'before:tanggal_event'],
+            'tanggal_rpc_selesai'  => ['required', 'date', 'after_or_equal:tanggal_rpc_mulai', 'before_or_equal:tanggal_event'],
+            'deskripsi'            => ['nullable', 'string'],
+            'status_event'         => ['required', 'in:Draft,Moderasi,Publikasi'],
+            // Contact Person (Narahubung)
+            'nama_cp'              => ['nullable', 'string', 'max:100'],
+            'no_wa_cp'             => ['nullable', 'string', 'max:20'],
+            'email_cp'             => ['nullable', 'email', 'max:150'],
             // Kategori lari (dinamis, bisa lebih dari 1)
-            'kategori' => ['required', 'array', 'min:1'],
-            'kategori.*.nama_kategori' => ['required', 'string', 'max:100'],
-            'kategori.*.harga' => ['required', 'numeric', 'min:0'],
-            'kategori.*.kuota_peserta' => ['required', 'integer', 'min:1'],
+            'kategori'                    => ['required', 'array', 'min:1'],
+            'kategori.*.nama_kategori'    => ['required', 'string', 'max:100'],
+            'kategori.*.harga'            => ['required', 'numeric', 'min:0'],
+            'kategori.*.kuota_peserta'    => ['required', 'integer', 'min:1'],
         ]);
 
         $bannerUrl = null;
@@ -136,19 +140,23 @@ class EventController extends Controller
         }
 
         $event = EventLari::create([
-            'id_organizer' => auth()->user()->id_user,
-            'nama_event' => $validated['nama_event'],
-            'slug' => Str::slug($validated['nama_event']) . '-' . Str::random(5),
-            'tanggal_event' => $validated['tanggal_event'],
-            'lokasi_venue' => $validated['lokasi_venue'],
-            'latitude' => $validated['latitude'] ?? null,
-            'longitude' => $validated['longitude'] ?? null,
-            'google_maps_url' => $validated['google_maps_url'] ?? null,
-            'tanggal_rpc_mulai' => $validated['tanggal_rpc_mulai'],
+            'id_organizer'        => auth()->user()->id_user,
+            'nama_event'          => $validated['nama_event'],
+            'slug'                => Str::slug($validated['nama_event']) . '-' . Str::random(5),
+            'tanggal_event'       => $validated['tanggal_event'],
+            'lokasi_venue'        => $validated['lokasi_venue'],
+            'latitude'            => $validated['latitude'] ?? null,
+            'longitude'           => $validated['longitude'] ?? null,
+            'google_maps_url'     => $validated['google_maps_url'] ?? null,
+            'tanggal_rpc_mulai'   => $validated['tanggal_rpc_mulai'],
             'tanggal_rpc_selesai' => $validated['tanggal_rpc_selesai'],
-            'deskripsi' => $validated['deskripsi'] ?? null,
-            'status_event' => $validated['status_event'],
-            'banner_url' => $bannerUrl,
+            'deskripsi'           => $validated['deskripsi'] ?? null,
+            'status_event'        => $validated['status_event'],
+            'banner_url'          => $bannerUrl,
+            // Contact Person
+            'nama_cp'             => $validated['nama_cp'] ?? null,
+            'no_wa_cp'            => $validated['no_wa_cp'] ?? null,
+            'email_cp'            => $validated['email_cp'] ?? null,
         ]);
 
         // Simpan kategori lari
@@ -186,17 +194,21 @@ class EventController extends Controller
         $event = $this->resolveEventForManagement($id);
 
         $validated = $request->validate([
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'nama_event' => ['required', 'string', 'max:255'],
-            'tanggal_event' => ['required', 'date'],
-            'lokasi_venue' => ['required', 'string', 'max:255'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'google_maps_url' => ['nullable', 'url', 'max:2000'],
-            'tanggal_rpc_mulai' => ['required', 'date'],
+            'banner'              => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'nama_event'          => ['required', 'string', 'max:255'],
+            'tanggal_event'       => ['required', 'date'],
+            'lokasi_venue'        => ['required', 'string', 'max:255'],
+            'latitude'            => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude'           => ['nullable', 'numeric', 'between:-180,180'],
+            'google_maps_url'     => ['nullable', 'url', 'max:2000'],
+            'tanggal_rpc_mulai'   => ['required', 'date'],
             'tanggal_rpc_selesai' => ['required', 'date', 'after_or_equal:tanggal_rpc_mulai'],
-            'deskripsi' => ['nullable', 'string'],
-            'status_event' => ['required', 'in:Draft,Publikasi,Selesai,Dibatalkan'],
+            'deskripsi'           => ['nullable', 'string'],
+            'status_event'        => ['required', 'in:Draft,Moderasi,Publikasi,Selesai,Dibatalkan'],
+            // Contact Person (Narahubung)
+            'nama_cp'             => ['nullable', 'string', 'max:100'],
+            'no_wa_cp'            => ['nullable', 'string', 'max:20'],
+            'email_cp'            => ['nullable', 'email', 'max:150'],
         ]);
 
         if ($request->hasFile('banner')) {

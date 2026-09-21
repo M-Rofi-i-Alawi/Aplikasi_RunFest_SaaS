@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
@@ -11,6 +12,7 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      * Memvalidasi apakah user yang login memiliki role yang diizinkan.
+     * Juga memblokir akun dengan status_akun = 'Diblokir'.
      *
      * Penggunaan di route: middleware('role:SuperAdmin,Organizer')
      *
@@ -24,7 +26,18 @@ class RoleMiddleware
                 ->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $userRole = auth()->user()->role;
+        $user = auth()->user();
+
+        // Blokir akun yang berstatus 'Diblokir' — paksa logout
+        if (isset($user->status_akun) && $user->status_akun === 'Diblokir') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')
+                ->with('error', '🚫 Akun Anda telah diblokir oleh Administrator. Hubungi support untuk informasi lebih lanjut.');
+        }
+
+        $userRole = $user->role;
 
         // SuperAdmin memiliki akses penuh ke seluruh rute
         if ($userRole !== 'SuperAdmin' && !in_array($userRole, $roles)) {
