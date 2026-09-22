@@ -161,6 +161,9 @@
                             <div>
                                 <h3 class="text-base font-black text-slate-900 dark:text-white">{{ $kat->nama_kategori }}</h3>
                                 <p class="text-2xl font-black text-[#F05423] mt-1">Rp {{ number_format($kat->harga, 0, ',', '.') }}</p>
+                                @if((int)$kat->harga > 0)
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">+ Rp 5.000 Biaya Layanan</p>
+                                @endif
                             </div>
                             @if($isFull)
                                 <span class="shrink-0 px-2.5 py-1 rounded-xl text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 uppercase">Penuh</span>
@@ -247,6 +250,9 @@
                                     <div>
                                         <h3 class="text-sm font-black text-slate-900 dark:text-white group-hover:text-[#F05423] transition-colors">{{ $kat->nama_kategori }}</h3>
                                         <p class="text-xl font-black text-[#F05423] leading-none mt-1">Rp {{ number_format($kat->harga, 0, ',', '.') }}</p>
+                                        @if((int)$kat->harga > 0)
+                                            <p class="text-[9px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">+ Rp 5.000 Biaya Layanan</p>
+                                        @endif
                                     </div>
                                     @if($isFull)
                                         <span class="shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-400 uppercase mt-0.5">Penuh</span>

@@ -16,6 +16,8 @@ class PembayaranLari extends Model
         'id_pendaftaran',
         'kode_transaksi',
         'snap_token',
+        'harga_tiket',
+        'biaya_layanan',
         'metode_pembayaran',
         'payment_type',
         'total_bayar',
@@ -27,6 +29,8 @@ class PembayaranLari extends Model
     protected function casts(): array
     {
         return [
+            'harga_tiket' => 'decimal:2',
+            'biaya_layanan' => 'decimal:2',
             'total_bayar' => 'decimal:2',
             'waktu_bayar' => 'datetime',
             'payload_response' => 'array',

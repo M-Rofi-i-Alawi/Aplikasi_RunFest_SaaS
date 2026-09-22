@@ -127,8 +127,10 @@ Route::middleware(['auth', 'role:SuperAdmin'])->prefix('admin')->group(function 
     // Dashboard ringkasan sistem
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    // Manajemen Organizer (Verifikasi & Aktivasi EO)
+    // Manajemen Organizer (Verifikasi & Aktivasi EO, Tambah EO Baru)
     Route::get('/organizers', [AdminController::class, 'organizers'])->name('admin.organizers');
+    Route::get('/organizers/manage', [AdminController::class, 'organizers'])->name('admin.organizers.index');
+    Route::post('/organizers', [AdminController::class, 'storeOrganizer'])->name('admin.organizers.store');
     Route::patch('/organizers/{id}/status', [AdminController::class, 'updateOrganizerStatus'])->name('admin.organizers.update-status');
 
     // Moderasi Event (Review & Publikasi)
@@ -137,6 +139,7 @@ Route::middleware(['auth', 'role:SuperAdmin'])->prefix('admin')->group(function 
 
     // Manajemen Marshal (Penugasan & PIN Scanner)
     Route::get('/marshals', [AdminController::class, 'marshals'])->name('admin.marshals');
+    Route::post('/marshals/store', [AdminController::class, 'storeMarshal'])->name('admin.marshals.store');
     Route::post('/marshals/assign', [AdminController::class, 'assignMarshal'])->name('admin.marshals.assign');
     Route::delete('/marshals/{id}', [AdminController::class, 'removeMarshal'])->name('admin.marshals.remove');
     Route::patch('/marshals/{id}/pin', [AdminController::class, 'updateMarshalPin'])->name('admin.marshals.update-pin');

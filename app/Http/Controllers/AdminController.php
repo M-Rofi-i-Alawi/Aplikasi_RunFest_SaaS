@@ -8,6 +8,7 @@ use App\Models\PendaftaranLari;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -63,18 +64,48 @@ class AdminController extends Controller
             $query->where('status_akun', $request->status);
         }
 
-        // Pencarian berdasarkan nama / email
+        // Pencarian berdasarkan nama / email / no_hp
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%");
             });
         }
 
-        $organizers = $query->withCount('eventLari')->latest()->paginate(20);
+        $organizers = $query->withCount('eventLari')->latest()->paginate(15);
 
-        return view('admin.organizers', compact('organizers'));
+        $stats = [
+            'total'   => User::where('role', 'Organizer')->count(),
+            'aktif'   => User::where('role', 'Organizer')->where('status_akun', 'Aktif')->count(),
+            'pending' => User::where('role', 'Organizer')->where('status_akun', 'Pending')->count(),
+            'diblokir'=> User::where('role', 'Organizer')->where('status_akun', 'Diblokir')->count(),
+        ];
+
+        $viewName = view()->exists('admin.organizers.index') ? 'admin.organizers.index' : 'admin.organizers';
+        return view($viewName, compact('organizers', 'stats'));
+    }
+
+    public function storeOrganizer(Request $request)
+    {
+        $validated = $request->validate([
+            'nama'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'no_hp'    => ['required', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $organizer = User::create([
+            'nama'        => $validated['nama'],
+            'email'       => $validated['email'],
+            'no_hp'       => $validated['no_hp'],
+            'password'    => Hash::make($validated['password']),
+            'role'        => 'Organizer',
+            'status_akun' => 'Aktif',
+        ]);
+
+        return back()->with('success', "Akun Event Organizer {$organizer->nama} berhasil dibuat!");
     }
 
     public function updateOrganizerStatus(Request $request, $id)
@@ -167,6 +198,27 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.marshals', compact('events', 'availableMarshals', 'availableEvents'));
+    }
+
+    public function storeMarshal(Request $request)
+    {
+        $validated = $request->validate([
+            'nama'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'no_hp'    => ['nullable', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+
+        $marshal = User::create([
+            'nama'        => $validated['nama'],
+            'email'       => $validated['email'],
+            'no_hp'       => $validated['no_hp'] ?? '-',
+            'password'    => Hash::make($validated['password']),
+            'role'        => 'Marshal',
+            'status_akun' => 'Aktif',
+        ]);
+
+        return back()->with('success', "Akun Marshal {$marshal->nama} berhasil dibuat dan siap ditugaskan!");
     }
 
     public function assignMarshal(Request $request)

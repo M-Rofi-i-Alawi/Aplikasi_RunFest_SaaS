@@ -308,6 +308,13 @@
                                             <span>Via: <strong>{{ $daftar->pembayaran->metode_pembayaran }}</strong></span>
                                             <span>Total: <strong class="text-[#F05423]">Rp {{ number_format($daftar->pembayaran->total_bayar, 0, ',', '.') }}</strong></span>
                                         </div>
+                                        @if($daftar->pembayaran->biaya_layanan > 0)
+                                            <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+                                                <span>Tiket: Rp {{ number_format($daftar->pembayaran->harga_tiket, 0, ',', '.') }}</span>
+                                                <span>+</span>
+                                                <span>Biaya Layanan: Rp {{ number_format($daftar->pembayaran->biaya_layanan, 0, ',', '.') }}</span>
+                                            </div>
+                                        @endif
                                     @endif
 
                                     {{-- Action Buttons --}}
@@ -631,6 +638,13 @@
                                         <span>Via: <strong>{{ $daftar->pembayaran->metode_pembayaran }}</strong></span>
                                         <span>Total: <strong class="text-slate-700 dark:text-slate-200">Rp {{ number_format($daftar->pembayaran->total_bayar, 0, ',', '.') }}</strong></span>
                                     </div>
+                                    @if($daftar->pembayaran->biaya_layanan > 0)
+                                        <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+                                            <span>Tiket: Rp {{ number_format($daftar->pembayaran->harga_tiket, 0, ',', '.') }}</span>
+                                            <span>+</span>
+                                            <span>Biaya Layanan: Rp {{ number_format($daftar->pembayaran->biaya_layanan, 0, ',', '.') }}</span>
+                                        </div>
+                                    @endif
                                 @endif
 
                                 {{-- Action Buttons: Invoice & Record --}}

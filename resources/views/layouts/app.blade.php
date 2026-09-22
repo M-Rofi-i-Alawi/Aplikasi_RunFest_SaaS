@@ -280,6 +280,12 @@
                                 📱 Scanner
                             </a>
                         @endif
+                        @if(auth()->user()->isSuperAdmin() || strtolower(auth()->user()->role ?? '') === 'superadmin')
+                            <a href="{{ route('admin.organizers') }}"
+                               class="px-3.5 py-2 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap {{ request()->routeIs('admin.organizers*') ? 'nav-active' : 'text-slate-600 dark:text-slate-300 hover:text-[#F05423] hover:bg-orange-50 dark:hover:bg-white/8' }}">
+                                👥 Kelola Organizer
+                            </a>
+                        @endif
                     @endauth
                 </div>
 
@@ -340,6 +346,16 @@
                                             Tiket Saya
                                         </a>
                                     @endif
+                                    @if(auth()->user()->isSuperAdmin() || strtolower(auth()->user()->role ?? '') === 'superadmin')
+                                        <a href="{{ route('admin.organizers') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8 hover:text-[#F05423] transition-colors">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.999-3.199a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg>
+                                            Kelola Organizer
+                                        </a>
+                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8 hover:text-[#F05423] transition-colors">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"/></svg>
+                                            Panel SuperAdmin
+                                        </a>
+                                    @endif
                                 </div>
                                 <div class="border-t border-slate-100 dark:border-white/8 py-1.5">
                                     <form method="POST" action="{{ route('logout') }}">
@@ -387,6 +403,10 @@
                     @endif
                     @if(auth()->user()->isMarshal() || auth()->user()->isSuperAdmin())
                         <a href="{{ route('marshal.scanner') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold {{ request()->routeIs('marshal.*') ? 'text-[#F05423] bg-orange-50 dark:bg-orange-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8' }}">📱 Scanner Racepack</a>
+                    @endif
+                    @if(auth()->user()->isSuperAdmin() || strtolower(auth()->user()->role ?? '') === 'superadmin')
+                        <a href="{{ route('admin.organizers') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.organizers*') ? 'text-[#F05423] bg-orange-50 dark:bg-orange-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8' }}">👥 Kelola Organizer</a>
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.dashboard*') ? 'text-[#F05423] bg-orange-50 dark:bg-orange-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8' }}">🛡️ Panel SuperAdmin</a>
                     @endif
                     <div class="border-t border-slate-100 dark:border-white/8 pt-2 mt-2 space-y-1">
                         <a href="{{ route('account.settings') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/8">⚙️ Pengaturan Akun</a>
@@ -493,6 +513,10 @@
                             @endif
                             @if(auth()->user()->isMarshal() || auth()->user()->isSuperAdmin())
                                 <li><a href="{{ route('marshal.scanner') }}" class="text-sm text-slate-400 hover:text-[#F05423] transition-colors font-medium">Scanner Racepack</a></li>
+                            @endif
+                            @if(auth()->user()->isSuperAdmin() || strtolower(auth()->user()->role ?? '') === 'superadmin')
+                                <li><a href="{{ route('admin.organizers') }}" class="text-sm text-slate-400 hover:text-[#F05423] transition-colors font-medium">Kelola Organizer</a></li>
+                                <li><a href="{{ route('admin.dashboard') }}" class="text-sm text-slate-400 hover:text-[#F05423] transition-colors font-medium">Panel SuperAdmin</a></li>
                             @endif
                             <li><a href="{{ route('account.settings') }}" class="text-sm text-slate-400 hover:text-[#F05423] transition-colors font-medium">Pengaturan Akun</a></li>
                         @else

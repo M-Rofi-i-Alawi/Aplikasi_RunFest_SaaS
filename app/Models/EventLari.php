@@ -180,6 +180,19 @@ class EventLari extends Model
     }
 
     /**
+     * Alias accessor & mutator untuk no_wa agar kompatibel dengan no_wa_cp.
+     */
+    public function getNoWaAttribute(): ?string
+    {
+        return $this->attributes['no_wa_cp'] ?? null;
+    }
+
+    public function setNoWaAttribute($value): void
+    {
+        $this->attributes['no_wa_cp'] = $value;
+    }
+
+    /**
      * Apakah event ini sudah selesai / lewat.
      */
     public function getIsFinishedAttribute(): bool

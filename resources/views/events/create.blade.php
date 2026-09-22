@@ -210,10 +210,11 @@
                     <label for="no_wa_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                         Nomor WhatsApp
                     </label>
-                    <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp') }}"
+                    <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp', old('no_wa', $event->no_wa_cp ?? ($event->no_wa ?? ''))) }}"
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                         placeholder="Contoh: 081234567890">
                     @error('no_wa_cp') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
+                    @error('no_wa') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Email CP --}}
@@ -221,7 +222,7 @@
                     <label for="email_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                         Email Narahubung <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
                     </label>
-                    <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp') }}"
+                    <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp', old('email', $event->email_cp ?? '')) }}"
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                         placeholder="Contoh: panitia@eventlari.com">
                     @error('email_cp') <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p> @enderror
@@ -234,7 +235,7 @@
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3 mb-6">
                 <h2 class="text-base font-black italic uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                    2. Kategori Perlombaan
+                    3. Kategori Perlombaan
                 </h2>
                 <button type="button" onclick="addKategori()"
                     class="px-4 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#F05423] hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-200 dark:border-orange-500/30 font-black italic uppercase tracking-wider text-xs transition-colors flex items-center gap-1.5">

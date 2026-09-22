@@ -126,6 +126,7 @@ class EventController extends Controller
             // Contact Person (Narahubung)
             'nama_cp'              => ['nullable', 'string', 'max:100'],
             'no_wa_cp'             => ['nullable', 'string', 'max:20'],
+            'no_wa'                => ['nullable', 'string', 'max:20'],
             'email_cp'             => ['nullable', 'email', 'max:150'],
             // Kategori lari (dinamis, bisa lebih dari 1)
             'kategori'                    => ['required', 'array', 'min:1'],
@@ -153,9 +154,9 @@ class EventController extends Controller
             'deskripsi'           => $validated['deskripsi'] ?? null,
             'status_event'        => $validated['status_event'],
             'banner_url'          => $bannerUrl,
-            // Contact Person
+            // Contact Person (tersimpan ke no_wa_cp)
             'nama_cp'             => $validated['nama_cp'] ?? null,
-            'no_wa_cp'            => $validated['no_wa_cp'] ?? null,
+            'no_wa_cp'            => $validated['no_wa_cp'] ?? ($validated['no_wa'] ?? null),
             'email_cp'            => $validated['email_cp'] ?? null,
         ]);
 
@@ -208,6 +209,7 @@ class EventController extends Controller
             // Contact Person (Narahubung)
             'nama_cp'             => ['nullable', 'string', 'max:100'],
             'no_wa_cp'            => ['nullable', 'string', 'max:20'],
+            'no_wa'               => ['nullable', 'string', 'max:20'],
             'email_cp'            => ['nullable', 'email', 'max:150'],
         ]);
 
@@ -222,6 +224,12 @@ class EventController extends Controller
             }
         }
         unset($validated['banner']);
+
+        // Sinkronisasi no_wa ke no_wa_cp jika input menggunakan nama no_wa
+        if (isset($validated['no_wa']) && !isset($validated['no_wa_cp'])) {
+            $validated['no_wa_cp'] = $validated['no_wa'];
+        }
+        unset($validated['no_wa']);
 
         $event->update($validated);
 

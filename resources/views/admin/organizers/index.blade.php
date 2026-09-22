@@ -399,14 +399,14 @@
 
                 <!-- Nama Organizer -->
                 <div>
-                    <label for="modal-nama" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
+                    <label for="nama" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
                         Nama Organizer / Komunitas / Perusahaan <span class="text-brand-orange">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400">
                             🏢
                         </span>
-                        <input type="text" id="modal-nama" name="nama" value="{{ old('nama') }}" required maxlength="255"
+                        <input type="text" id="nama" name="nama" value="{{ old('nama') }}" required maxlength="255"
                                placeholder="cth. Runner Mania Organizer"
                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none">
                     </div>
@@ -414,14 +414,14 @@
 
                 <!-- Email Organizer -->
                 <div>
-                    <label for="modal-email" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
                         Alamat Email Resmi <span class="text-brand-orange">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400">
                             ✉️
                         </span>
-                        <input type="email" id="modal-email" name="email" value="{{ old('email') }}" required maxlength="255"
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required maxlength="255"
                                placeholder="organizer@runfest.id"
                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none">
                     </div>
@@ -430,14 +430,14 @@
 
                 <!-- No HP / WhatsApp -->
                 <div>
-                    <label for="modal-no_hp" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
+                    <label for="no_hp" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300 mb-1.5">
                         Nomor HP / WhatsApp <span class="text-brand-orange">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400">
                             📱
                         </span>
-                        <input type="text" id="modal-no_hp" name="no_hp" value="{{ old('no_hp') }}" required maxlength="20"
+                        <input type="text" id="no_hp" name="no_hp" value="{{ old('no_hp') }}" required maxlength="20"
                                placeholder="081234567890"
                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none">
                     </div>
@@ -447,7 +447,7 @@
                 <!-- Password -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="modal-password" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300">
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-slate-300">
                             Password Awal Akun <span class="text-brand-orange">*</span>
                         </label>
                         <button type="button" onclick="generateRandomPassword()"
@@ -459,7 +459,7 @@
                         <span class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400">
                             🔒
                         </span>
-                        <input type="password" id="modal-password" name="password" required minlength="8"
+                        <input type="password" id="password" name="password" required minlength="8"
                                placeholder="Minimal 8 karakter..."
                                class="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-sm font-medium text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none">
                         <button type="button" onclick="togglePasswordVisibility()"
@@ -505,7 +505,7 @@
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             setTimeout(() => {
-                const namaInput = document.getElementById('modal-nama');
+                const namaInput = document.getElementById('nama');
                 if (namaInput) namaInput.focus();
             }, 100);
         }
@@ -520,7 +520,7 @@
     }
 
     function togglePasswordVisibility() {
-        const input = document.getElementById('modal-password');
+        const input = document.getElementById('password');
         const icon = document.getElementById('eye-icon');
         if (input) {
             if (input.type === 'password') {
@@ -539,7 +539,7 @@
         for (let i = 0; i < 12; i++) {
             pass += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        const input = document.getElementById('modal-password');
+        const input = document.getElementById('password');
         if (input) {
             input.type = 'text';
             input.value = pass;

@@ -200,7 +200,7 @@
                             <label for="nama_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                 Nama CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
                             </label>
-                            <input type="text" id="nama_cp" name="nama_cp" value="{{ old('nama_cp', $event->nama_cp) }}"
+                            <input type="text" id="nama_cp" name="nama_cp" value="{{ old('nama_cp', old('nama', $event->nama_cp ?? '')) }}"
                                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                                 placeholder="Panitia Event">
                         </div>
@@ -208,7 +208,7 @@
                             <label for="no_wa_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                 WhatsApp CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
                             </label>
-                            <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp', $event->no_wa_cp) }}"
+                            <input type="text" id="no_wa_cp" name="no_wa_cp" value="{{ old('no_wa_cp', old('no_wa', $event->no_wa_cp ?? ($event->no_wa ?? ''))) }}"
                                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                                 placeholder="628123456789">
                         </div>
@@ -216,7 +216,7 @@
                             <label for="email_cp" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                 Email CP <span class="text-slate-400 font-normal text-[11px] lowercase">(opsional)</span>
                             </label>
-                            <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp', $event->email_cp) }}"
+                            <input type="email" id="email_cp" name="email_cp" value="{{ old('email_cp', old('email', $event->email_cp ?? '')) }}"
                                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#081624] text-slate-900 dark:text-white focus:outline-none focus:border-[#F05423] focus:ring-2 focus:ring-[#F05423]/20 text-sm font-medium transition-all"
                                 placeholder="event@domain.com">
                         </div>

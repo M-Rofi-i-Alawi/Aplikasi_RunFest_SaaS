@@ -211,11 +211,11 @@
                         <tbody class="divide-y divide-slate-100">
                             <tr class="bg-white">
                                 <td class="px-3.5 py-2.5">
-                                    <span class="font-bold text-slate-900 block">Pendaftaran {{ $pendaftaran->kategori->nama_kategori }}</span>
+                                    <span class="font-bold text-slate-900 block">Tiket {{ $pendaftaran->kategori->nama_kategori }}</span>
                                     <span class="text-[10px] text-slate-500">{{ $pendaftaran->event->nama_event }}</span>
                                 </td>
                                 <td class="px-2 py-2.5 text-center font-bold text-slate-700">1</td>
-                                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">Rp {{ number_format($pendaftaran->pembayaran->total_bayar, 0, ',', '.') }}</td>
+                                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">Rp {{ number_format($pendaftaran->pembayaran->harga_tiket, 0, ',', '.') }}</td>
                             </tr>
                             <tr class="bg-white">
                                 <td class="px-3.5 py-2">
@@ -226,9 +226,9 @@
                             </tr>
                             <tr class="bg-slate-50/60">
                                 <td class="px-3.5 py-2" colspan="2">
-                                    <span class="text-slate-500 text-[11px]">Biaya Layanan / Payment Gateway</span>
+                                    <span class="text-slate-500 text-[11px]">Biaya Layanan Aplikasi</span>
                                 </td>
-                                <td class="px-3.5 py-2 text-right font-semibold text-emerald-600">Rp 0</td>
+                                <td class="px-3.5 py-2 text-right font-semibold {{ $pendaftaran->pembayaran->biaya_layanan > 0 ? 'text-slate-700' : 'text-emerald-600' }}">Rp {{ number_format($pendaftaran->pembayaran->biaya_layanan, 0, ',', '.') }}</td>
                             </tr>
                         </tbody>
                         <tfoot>

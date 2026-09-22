@@ -109,6 +109,10 @@ class OrderController extends Controller
 
                 $isGratis = ((int) $kategori->harga) === 0;
 
+                // Hitung biaya layanan platform (flat fee Rp 5.000 untuk event berbayar)
+                $biayaLayanan = $isGratis ? 0 : 5000;
+                $totalBayar   = $isGratis ? 0 : ($kategori->harga + $biayaLayanan);
+
                 // Generate QR Code Token
                 $qrCodeToken = hash('sha256', $user->id_user . '-' . $validated['id_event'] . '-' . Str::uuid() . '-' . microtime(true));
 
@@ -139,7 +143,9 @@ class OrderController extends Controller
                     'id_pendaftaran'    => $pendaftaran->id_pendaftaran,
                     'kode_transaksi'    => $kodeTransaksi,
                     'metode_pembayaran' => $isGratis ? 'Gratis' : ($validated['metode_pembayaran'] ?? 'Midtrans Gateway'),
-                    'total_bayar'       => $kategori->harga,
+                    'harga_tiket'       => $kategori->harga,
+                    'biaya_layanan'     => $biayaLayanan,
+                    'total_bayar'       => $totalBayar,
                     'payment_type'      => $isGratis ? 'free' : null,
                     'status_transaksi'  => $isGratis ? 'settlement' : 'pending',
                     'waktu_bayar'       => $isGratis ? now() : null,
@@ -262,8 +268,13 @@ class OrderController extends Controller
         $eventObj = ($pendaftaran && $pendaftaran->event) ? $pendaftaran->event : $event;
         $kategoriObj = ($pendaftaran && $pendaftaran->kategori) ? $pendaftaran->kategori : $kategori;
 
-        $itemPrice = (int) $kategoriObj->harga;
-        $grossAmount = max(1, $itemPrice);
+        // Gunakan harga_tiket dan biaya_layanan dari record pembayaran
+        $hargaTiket    = (int) $pembayaran->harga_tiket;
+        $biayaLayanan  = (int) $pembayaran->biaya_layanan;
+        $grossAmount   = (int) $pembayaran->total_bayar;
+
+        // Safety: pastikan gross_amount minimal 1 untuk Midtrans
+        $grossAmount = max(1, $grossAmount);
 
         $namaEvent = $eventObj->nama_event ?? 'Event Lari';
         $namaKategori = $kategoriObj->nama_kategori ?? 'Kategori';
@@ -271,12 +282,22 @@ class OrderController extends Controller
 
         $itemDetails = [
             [
-                'id'       => 'KAT-' . ($kategoriObj->id_kategori ?? 1),
-                'price'    => $grossAmount,
+                'id'       => 'TIK-' . ($kategoriObj->id_kategori ?? 1),
+                'price'    => max(1, $hargaTiket),
                 'quantity' => 1,
-                'name'     => $itemName,
-            ]
+                'name'     => 'Tiket ' . $namaKategori,
+            ],
         ];
+
+        // Tambahkan item Biaya Layanan jika > 0
+        if ($biayaLayanan > 0) {
+            $itemDetails[] = [
+                'id'       => 'FEE-RUNFEST',
+                'price'    => $biayaLayanan,
+                'quantity' => 1,
+                'name'     => 'Biaya Layanan Aplikasi',
+            ];
+        }
 
         $response = Http::timeout(15)
             ->withBasicAuth($serverKey, '')
