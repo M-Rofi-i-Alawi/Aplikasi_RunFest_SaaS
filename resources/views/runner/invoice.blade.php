@@ -187,6 +187,14 @@
                                 {{ $pendaftaran->bib_number }}
                             </span>
                         </div>
+                        @if($pendaftaran->event->tanggal_rpc_mulai && $pendaftaran->event->tanggal_rpc_selesai)
+                            <div class="sm:col-span-2">
+                                <span class="text-slate-400 text-[10px] font-semibold block">Jadwal Pengambilan Racepack (RPC)</span>
+                                <span class="text-slate-900 font-bold text-xs">
+                                    {{ $pendaftaran->event->tanggal_rpc_mulai->translatedFormat('l, d F Y') }} s/d {{ $pendaftaran->event->tanggal_rpc_selesai->translatedFormat('l, d F Y') }}
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

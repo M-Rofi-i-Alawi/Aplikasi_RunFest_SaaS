@@ -101,6 +101,156 @@
     .custom-modal-scroll::-webkit-scrollbar-thumb:hover {
         background: rgba(148, 163, 184, 0.5);
     }
+
+    /* === HIGH-CONTRAST ALERT BANNERS (SANGAT KONTRAS DI MODE TERANG & GELAP) === */
+    .scan-alert-kuning {
+        background-color: #fefce8 !important; /* amber-50 */
+        border: 2px solid #d97706 !important; /* amber-600 */
+        color: #451a03 !important; /* amber-950 */
+    }
+    .dark .scan-alert-kuning {
+        background-color: rgba(69, 26, 3, 0.88) !important;
+        border: 2px solid #fbbf24 !important; /* amber-400 */
+        color: #fef3c7 !important; /* amber-100 */
+    }
+    .scan-alert-kuning .alert-title {
+        color: #78350f !important; /* amber-900 */
+        background-color: #fde68a !important; /* amber-200 */
+        border-color: #f59e0b !important;
+    }
+    .dark .scan-alert-kuning .alert-title {
+        color: #fde68a !important;
+        background-color: rgba(245, 158, 11, 0.3) !important;
+        border-color: rgba(251, 191, 36, 0.5) !important;
+    }
+    .scan-alert-kuning .alert-desc {
+        color: #451a03 !important; /* amber-950 */
+    }
+    .dark .scan-alert-kuning .alert-desc {
+        color: #fef3c7 !important; /* amber-100 */
+    }
+    .scan-alert-kuning .alert-details {
+        border-color: #f59e0b !important;
+        color: #451a03 !important;
+    }
+    .dark .scan-alert-kuning .alert-details {
+        border-color: rgba(245, 158, 11, 0.45) !important;
+        color: #fde68a !important;
+    }
+    .scan-alert-kuning .alert-close-btn {
+        color: #78350f !important;
+    }
+    .scan-alert-kuning .alert-close-btn:hover {
+        color: #451a03 !important;
+        background-color: #fde68a !important;
+    }
+    .dark .scan-alert-kuning .alert-close-btn {
+        color: #fde68a !important;
+    }
+    .dark .scan-alert-kuning .alert-close-btn:hover {
+        color: #ffffff !important;
+        background-color: rgba(245, 158, 11, 0.35) !important;
+    }
+
+    /* Green / Hijau */
+    .scan-alert-hijau {
+        background-color: #ecfdf5 !important; /* emerald-50 */
+        border: 2px solid #059669 !important; /* emerald-600 */
+        color: #022c22 !important; /* emerald-950 */
+    }
+    .dark .scan-alert-hijau {
+        background-color: rgba(6, 78, 59, 0.88) !important;
+        border: 2px solid #34d399 !important; /* emerald-400 */
+        color: #d1fae5 !important; /* emerald-100 */
+    }
+    .scan-alert-hijau .alert-title {
+        color: #064e3b !important;
+        background-color: #a7f3d0 !important;
+        border-color: #10b981 !important;
+    }
+    .dark .scan-alert-hijau .alert-title {
+        color: #6ee7b7 !important;
+        background-color: rgba(16, 185, 129, 0.3) !important;
+        border-color: rgba(52, 211, 153, 0.5) !important;
+    }
+    .scan-alert-hijau .alert-desc {
+        color: #022c22 !important;
+    }
+    .dark .scan-alert-hijau .alert-desc {
+        color: #d1fae5 !important;
+    }
+    .scan-alert-hijau .alert-details {
+        border-color: #10b981 !important;
+        color: #064e3b !important;
+    }
+    .dark .scan-alert-hijau .alert-details {
+        border-color: rgba(16, 185, 129, 0.45) !important;
+        color: #a7f3d0 !important;
+    }
+    .scan-alert-hijau .alert-close-btn {
+        color: #064e3b !important;
+    }
+    .scan-alert-hijau .alert-close-btn:hover {
+        color: #022c22 !important;
+        background-color: #a7f3d0 !important;
+    }
+    .dark .scan-alert-hijau .alert-close-btn {
+        color: #a7f3d0 !important;
+    }
+    .dark .scan-alert-hijau .alert-close-btn:hover {
+        color: #ffffff !important;
+        background-color: rgba(16, 185, 129, 0.35) !important;
+    }
+
+    /* Red / Merah */
+    .scan-alert-merah {
+        background-color: #fff1f2 !important; /* rose-50 */
+        border: 2px solid #e11d48 !important; /* rose-600 */
+        color: #4c0519 !important; /* rose-950 */
+    }
+    .dark .scan-alert-merah {
+        background-color: rgba(76, 5, 25, 0.88) !important;
+        border: 2px solid #fb7185 !important; /* rose-400 */
+        color: #ffe4e6 !important; /* rose-100 */
+    }
+    .scan-alert-merah .alert-title {
+        color: #881337 !important;
+        background-color: #fecdd3 !important;
+        border-color: #f43f5e !important;
+    }
+    .dark .scan-alert-merah .alert-title {
+        color: #fecdd3 !important;
+        background-color: rgba(244, 63, 94, 0.3) !important;
+        border-color: rgba(251, 113, 133, 0.5) !important;
+    }
+    .scan-alert-merah .alert-desc {
+        color: #4c0519 !important;
+    }
+    .dark .scan-alert-merah .alert-desc {
+        color: #ffe4e6 !important;
+    }
+    .scan-alert-merah .alert-details {
+        border-color: #f43f5e !important;
+        color: #4c0519 !important;
+    }
+    .dark .scan-alert-merah .alert-details {
+        border-color: rgba(244, 63, 94, 0.45) !important;
+        color: #fecdd3 !important;
+    }
+    .scan-alert-merah .alert-close-btn {
+        color: #881337 !important;
+    }
+    .scan-alert-merah .alert-close-btn:hover {
+        color: #4c0519 !important;
+        background-color: #fecdd3 !important;
+    }
+    .dark .scan-alert-merah .alert-close-btn {
+        color: #fecdd3 !important;
+    }
+    .dark .scan-alert-merah .alert-close-btn:hover {
+        color: #ffffff !important;
+        background-color: rgba(244, 63, 94, 0.35) !important;
+    }
 </style>
 @endpush
 
@@ -806,26 +956,23 @@
     }
 
     // ================================================================
-    // ALERT BANNER (UNTUK HASIL SCAN & FEEDBACK)
+    // ALERT BANNER (UNTUK HASIL SCAN & FEEDBACK — HIGH CONTRAST)
     // ================================================================
     function showAlertBanner(indicator, title, message, data = null) {
         alertContainer.classList.remove('hidden');
 
         const styles = {
             hijau: {
-                bg: 'bg-emerald-500/15 border-2 border-emerald-500 text-emerald-300',
+                alertClass: 'scan-alert-hijau',
                 icon: '✅',
-                titleColor: 'text-emerald-400',
             },
             kuning: {
-                bg: 'bg-amber-500/15 border-2 border-amber-500 text-amber-300',
+                alertClass: 'scan-alert-kuning',
                 icon: '⚠️',
-                titleColor: 'text-amber-400',
             },
             merah: {
-                bg: 'bg-rose-500/15 border-2 border-rose-500 text-rose-300',
+                alertClass: 'scan-alert-merah',
                 icon: '❌',
-                titleColor: 'text-rose-400',
             },
         };
 
@@ -834,23 +981,38 @@
         let extraDetails = '';
         if (data && indicator === 'kuning') {
             extraDetails = `
-                <div class="mt-2 text-xs font-mono opacity-90 border-t border-amber-500/30 pt-2">
-                    BIB: <strong>${data.bib_number || '-'}</strong> · Peserta: <strong>${data.nama_runner || '-'}</strong>
-                    ${data.waktu_pengambilan ? '<br>Waktu: ' + data.waktu_pengambilan : ''}
-                    ${data.is_diwakilkan ? '<br>Diambilkan oleh: ' + (data.nama_pengambil || '-') : ''}
+                <div class="alert-details mt-2.5 text-xs font-mono border-t pt-2.5 leading-relaxed">
+                    <div class="font-bold flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span>BIB:</span>
+                        <span class="px-2 py-0.5 rounded font-black text-xs sm:text-sm bg-amber-200/90 dark:bg-amber-500/30 text-amber-950 dark:text-amber-100 border border-amber-400/60 dark:border-amber-400/40">
+                            ${data.bib_number || '-'}
+                        </span>
+                        <span>· Peserta:</span>
+                        <strong class="font-black underline">${data.nama_runner || '-'}</strong>
+                    </div>
+                    ${data.waktu_pengambilan ? '<div class="mt-1 font-semibold">Waktu Pengambilan: <strong>' + data.waktu_pengambilan + '</strong></div>' : ''}
+                    ${data.is_diwakilkan ? '<div class="mt-1 font-bold text-rose-700 dark:text-rose-300 flex items-center gap-1"><span>⚠️</span> <span>Diambilkan oleh: <strong>' + (data.nama_pengambil || '-') + '</strong>' + (data.nik_pengambil ? ' (NIK: ' + data.nik_pengambil + ')' : '') + '</span></div>' : ''}
                 </div>
             `;
         }
 
         alertContainer.innerHTML = `
-            <div class="rounded-2xl p-4 ${s.bg} flex items-start gap-3 shadow-lg">
-                <span class="text-2xl shrink-0">${s.icon}</span>
+            <div class="rounded-2xl p-4 sm:p-5 ${s.alertClass} flex items-start gap-3 sm:gap-4 shadow-lg transition-all">
+                <span class="text-2xl sm:text-3xl shrink-0 mt-0.5">${s.icon}</span>
                 <div class="min-w-0 flex-1">
-                    <h4 class="text-xs font-black uppercase tracking-wider ${s.titleColor}">${title}</h4>
-                    <p class="text-xs font-bold leading-relaxed mt-0.5">${message}</p>
+                    <div class="flex items-center gap-2">
+                        <span class="alert-title text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-md border inline-block">
+                            ${title}
+                        </span>
+                    </div>
+                    <p class="alert-desc text-xs sm:text-sm font-extrabold leading-relaxed mt-1.5">${message}</p>
                     ${extraDetails}
                 </div>
-                <button type="button" onclick="alertContainer.classList.add('hidden')" class="text-white/60 hover:text-white text-sm font-black p-1">✕</button>
+                <button type="button" onclick="alertContainer.classList.add('hidden')" 
+                    class="alert-close-btn p-1.5 rounded-xl font-black text-sm transition-colors shrink-0 flex items-center justify-center" 
+                    title="Tutup Peringatan">
+                    ✕
+                </button>
             </div>
         `;
 
@@ -884,9 +1046,15 @@
         const indicator = data.indicator || 'merah';
 
         const badgeColors = {
-            hijau: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
-            kuning: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
-            merah: 'border-rose-500/40 bg-rose-500/10 text-rose-300',
+            hijau: 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300',
+            kuning: 'border-amber-500/50 bg-amber-500/15 text-amber-300',
+            merah: 'border-rose-500/50 bg-rose-500/15 text-rose-300',
+        };
+
+        const tagBadges = {
+            hijau: 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40',
+            kuning: 'bg-amber-500/25 text-amber-300 border border-amber-500/40',
+            merah: 'bg-rose-500/25 text-rose-300 border border-rose-500/40',
         };
 
         const item = document.createElement('div');
@@ -895,7 +1063,7 @@
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                     <strong class="font-mono text-sm font-black text-white">${bib}</strong>
-                    <span class="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-black/40">
+                    <span class="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${tagBadges[indicator] || tagBadges.merah}">
                         ${indicator.toUpperCase()}
                     </span>
                 </div>

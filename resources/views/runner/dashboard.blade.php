@@ -251,7 +251,7 @@
                                         {{-- 3. Tanggal Lomba --}}
                                         <div class="bg-slate-50 dark:bg-white/5 rounded-xl p-3 border border-slate-100 dark:border-white/8 col-span-1">
                                             <span class="text-[9px] text-slate-400 font-black uppercase tracking-wide block mb-0.5">Tanggal Lomba</span>
-                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white block">{{ $daftar->event->tanggal_event->format('d M Y') }}</span>
+                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white block">{{ $daftar->event->tanggal_event->translatedFormat('l, d M Y') }}</span>
                                         </div>
 
                                         {{-- 4. Ukuran Jersey --}}
@@ -265,6 +265,60 @@
                                             <span class="text-[9px] text-slate-400 font-black uppercase tracking-wide block mb-0.5">Gol. Darah</span>
                                             <span class="text-base font-black text-slate-900 dark:text-white">{{ $daftar->runner->golongan_darah ?? auth()->user()->golongan_darah ?? '-' }}</span>
                                         </div>
+
+                                        {{-- 6. Informasi Lengkap Jadwal Pengambilan Racepack (RPC) --}}
+                                        @if($daftar->event->tanggal_rpc_mulai && $daftar->event->tanggal_rpc_selesai)
+                                            <div class="bg-gradient-to-r from-amber-50/90 via-orange-50/80 to-amber-50/90 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-amber-950/40 rounded-xl p-3 sm:p-3.5 border-2 border-amber-300 dark:border-amber-500/40 col-span-2 sm:col-span-3 shadow-sm">
+                                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                                                    <div class="flex items-start sm:items-center gap-2.5 min-w-0">
+                                                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center text-base shrink-0 mt-0.5 sm:mt-0 shadow-inner">
+                                                            📦
+                                                        </div>
+                                                        <div class="min-w-0">
+                                                            <span class="text-[9px] text-amber-800 dark:text-amber-300 font-black uppercase tracking-wider block">
+                                                                Jadwal Pengambilan Racepack (RPC)
+                                                            </span>
+                                                            <div class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight mt-0.5 flex flex-wrap items-center gap-1.5">
+                                                                <span class="text-amber-950 dark:text-amber-100">
+                                                                    Mulai Ambil: <strong class="underline font-black text-[#F05423] dark:text-orange-400">{{ $daftar->event->tanggal_rpc_mulai->translatedFormat('l, d M Y') }}</strong>
+                                                                </span>
+                                                                <span class="text-slate-400 font-bold">s/d</span>
+                                                                <span class="text-amber-950 dark:text-amber-100">
+                                                                    Sampai Hari: <strong class="underline font-black text-[#F05423] dark:text-orange-400">{{ $daftar->event->tanggal_rpc_selesai->translatedFormat('l, d M Y') }}</strong>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Status Badge Periode RPC --}}
+                                                    @php
+                                                        $todayDate = now()->toDateString();
+                                                        $rpcMulai = $daftar->event->tanggal_rpc_mulai->toDateString();
+                                                        $rpcSelesai = $daftar->event->tanggal_rpc_selesai->toDateString();
+                                                    @endphp
+                                                    <div class="shrink-0 self-start sm:self-auto">
+                                                        @if($daftar->status_racepack === 'Sudah Diambil')
+                                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 shadow-sm">
+                                                                ✓ Racepack Sudah Diambil
+                                                            </span>
+                                                        @elseif($todayDate >= $rpcMulai && $todayDate <= $rpcSelesai)
+                                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-white animate-pulse shadow-sm">
+                                                                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                                                Buka Hari Ini
+                                                            </span>
+                                                        @elseif($todayDate < $rpcMulai)
+                                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-500/40">
+                                                                ⏳ Belum Dimulai
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-500/40">
+                                                                ✕ Periode RPC Berakhir
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     {{-- Location --}}
@@ -293,6 +347,12 @@
                                                     <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                                     Tunjukkan QR Code E-Ticket
                                                 </li>
+                                                @if($daftar->event->tanggal_rpc_mulai && $daftar->event->tanggal_rpc_selesai)
+                                                    <li class="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 font-bold">
+                                                        <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                        <span>Jadwal Pengambilan: <strong>{{ $daftar->event->tanggal_rpc_mulai->translatedFormat('l, d M Y') }}</strong> s/d <strong>{{ $daftar->event->tanggal_rpc_selesai->translatedFormat('l, d M Y') }}</strong></span>
+                                                    </li>
+                                                @endif
                                                 <li class="flex items-center gap-2 text-amber-600 dark:text-amber-400">
                                                     <svg class="w-4 h-4 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                                                     Jika diwakilkan: Surat Kuasa + KTP Perwakilan
@@ -391,6 +451,14 @@
                                                 ⏳ Belum Diambil
                                             </span>
                                         @endif
+
+                                        {{-- Informasi Periode RPC di Right Panel --}}
+                                        @if($daftar->event->tanggal_rpc_mulai && $daftar->event->tanggal_rpc_selesai)
+                                            <div class="mt-2.5 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-200/80 dark:border-white/10 pt-2 text-center w-full">
+                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider block">Batas Ambil RPC:</span>
+                                                <strong class="text-[#F05423] dark:text-orange-400 font-extrabold text-[11px] block mt-0.5">{{ $daftar->event->tanggal_rpc_selesai->translatedFormat('l, d M Y') }}</strong>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     {{-- Token --}}
@@ -443,6 +511,17 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Informasi Jadwal RPC untuk Tiket Pending --}}
+                                @if($daftar->event->tanggal_rpc_mulai && $daftar->event->tanggal_rpc_selesai)
+                                    <div class="bg-amber-50/70 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                                        <span class="text-base shrink-0">📦</span>
+                                        <div class="leading-tight">
+                                            <span class="text-[9px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300 block">Jadwal Pengambilan Racepack (RPC):</span>
+                                            <span class="font-bold">Mulai {{ $daftar->event->tanggal_rpc_mulai->translatedFormat('l, d M Y') }} s/d Sampai Hari {{ $daftar->event->tanggal_rpc_selesai->translatedFormat('l, d M Y') }}</span>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 {{-- Pending Actions --}}
                                 @if($daftar->status_pembayaran === 'Pending')
@@ -616,6 +695,16 @@
                                         <span class="text-[9px] text-slate-400 font-black uppercase tracking-wide block mb-0.5">Gol. Darah</span>
                                         <span class="text-base font-black text-slate-800 dark:text-slate-200">{{ $daftar->runner->golongan_darah ?? auth()->user()->golongan_darah ?? '-' }}</span>
                                     </div>
+
+                                    {{-- 6. Riwayat Jadwal Pengambilan Racepack (RPC) --}}
+                                    @if($daftar->event->tanggal_rpc_mulai && $daftar->event->tanggal_rpc_selesai)
+                                        <div class="bg-slate-50 dark:bg-white/5 rounded-xl p-3 border border-slate-100 dark:border-white/8 col-span-2 sm:col-span-3">
+                                            <span class="text-[9px] text-slate-400 font-black uppercase tracking-wide block mb-0.5">Jadwal Pengambilan Racepack (RPC)</span>
+                                            <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">
+                                                Mulai {{ $daftar->event->tanggal_rpc_mulai->translatedFormat('l, d M Y') }} s/d Sampai Hari {{ $daftar->event->tanggal_rpc_selesai->translatedFormat('l, d M Y') }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 {{-- Location --}}
